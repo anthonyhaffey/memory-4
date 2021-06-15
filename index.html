@@ -1,1 +1,143 @@
-hello world
+<style>
+.memory_box{
+  background-color:orange;
+  width:200px;
+  height:200px;
+  font-size: 50px;
+  text-align: center;
+  line-height: 200px;
+}
+/*
+block comments within style
+*/
+</style>
+<h5>Memory Game</h5>
+
+<table>
+  <tr>
+    <td>
+      <!--
+        comment here
+      -->
+      <div id="box_0" class="memory_box"></div>
+    </td>
+    <td>
+      <div id="box_1" class="memory_box"></div>
+    </td>
+    <td>
+      <div id="box_2" class="memory_box"></div>
+    </td>
+    <td>
+      <div id="box_3" class="memory_box"></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div id="box_4" class="memory_box"></div>
+    </td>
+    <td>
+      <div id="box_5" class="memory_box"></div>
+    </td>
+    <td>
+      <div id="box_6" class="memory_box"></div>
+    </td>
+    <td>
+      <div id="box_7" class="memory_box"></div>
+    </td>
+  </tr>
+</table>
+
+
+<script src="libraries/jquery-3.6.0.min.js"></script>
+
+<script>
+
+// https://stackoverflow.com/a/2450976/4490801
+function shuffle(array) {
+  var currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+function bind_memory_box(){
+  $(".memory_box").on("click",function(){
+      // what you want to happen goes here
+
+      var this_id = this.id;
+      /*
+      * if the person presses the same box twice lets deselect it.
+      */
+      if(card_obj.selected_boxes[0] == this_id){
+
+        $("#" + this_id).html("");
+        card_obj.visible_letters = [];
+        card_obj.selected_boxes  = [];
+
+      } else {
+
+        var this_number = this_id.replace("box_","");
+
+        console.log(this_number);
+
+        var this_letter = card_obj.card_letters[this_number];
+
+        $(this).html(this_letter);
+
+        card_obj.visible_letters.push(
+          this_letter
+        );
+
+        card_obj.selected_boxes.push(
+          this.id
+        );
+
+        if(card_obj.visible_letters.length == 2){
+          if(card_obj.visible_letters[0] == card_obj.visible_letters[1]){
+            $("#" + card_obj.selected_boxes[0]).fadeOut();
+            $("#" + card_obj.selected_boxes[1]).fadeOut();
+            card_obj.visible_letters = [];
+            card_obj.selected_boxes  = [];
+          } else {
+            $(".memory_box").unbind();
+            setTimeout(function(){
+              $("#" + card_obj.selected_boxes[0]).html("");
+              $("#" + card_obj.selected_boxes[1]).html("");
+              card_obj.visible_letters = [];
+              card_obj.selected_boxes  = [];
+              bind_memory_box();
+            }, 1000);
+          }
+        }
+      }
+  });
+}
+bind_memory_box();
+
+var card_obj = {
+  card_letters : [
+    "a", // box_0
+    "b", // box_1
+    "c", // box_2
+    "d", // box_3
+    "a",
+    "b",
+    "c",
+    "d"
+  ],
+  visible_letters : [],
+  selected_boxes : []
+};
+shuffle(card_obj.card_letters);
+</script>
